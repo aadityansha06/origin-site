@@ -6,8 +6,8 @@ import { useState } from "react";
 import { Mark } from "./mark";
 
 const NAV = [
-  { href: "/#architecture", label: "Architecture" },
-  { href: "/#capacity", label: "Capacity" },
+  { href: "/architecture", label: "Architecture" },
+  { href: "/capacity", label: "Capacity" },
   { href: "/docs", label: "Docs" },
 ];
 
@@ -52,10 +52,10 @@ export function SiteHeader() {
             GitHub
           </a>
           <a
-            href="#getting-started"
+            href="getting-started"
             className="text-sm font-medium px-3.5 py-2 rounded-[var(--radius-sm)] border border-[var(--color-border)] hover:border-[var(--color-signal)] hover:text-[var(--color-signal-bright)] transition-colors"
           >
-            Read the design
+            Get Started
           </a>
         </div>
 

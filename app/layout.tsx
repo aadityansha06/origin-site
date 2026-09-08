@@ -8,7 +8,7 @@ const fraunces = { variable: "font-display-temp" };
 const inter = { variable: "font-body-temp" };
 const jetbrainsMono = { variable: "font-mono-temp" };
 
-const SITE_URL = "https://origindb.dev";
+const SITE_URL = "https://origindb.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
