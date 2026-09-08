@@ -6,7 +6,7 @@ import { ComparisonTable } from "@/components/ComparisonTable";
 import { Faq } from "@/components/Faq";
 
 export const metadata: Metadata = {
-  title: "OriginDB — the vector database a leaked API key can't empty",
+  title: "OriginDB — A vector database built so a stolen API key can never delete anything.",
   description:
     "OriginDB is a disk-backed ANN vector database built in C, with one core guarantee: a delete request can travel over the network, but the actual deletion only ever happens locally, by a human, with explicit confirmation.",
   openGraph: {
@@ -26,30 +26,30 @@ export const metadata: Metadata = {
 const GOOD_FIT = [
   {
     title: "Bank transaction / document search",
-    body: "Records get inserted and searched constantly, almost never deleted, and a leaked key must never be able to wipe history.",
+    body: "History accumulates for years and is searched constantly. A single leaked key should never be the reason a decade of records disappears in a night.",
   },
   {
     title: "Government records / compliance archive",
-    body: "Write-once-ish, read-heavy — deletion is a rare, deliberate, audited event, not a routine action.",
+    body: "The data is written once and read for the rest of its life. Deletion, when it happens at all, is a deliberate, auditable event — never a side effect of a stolen credential.",
   },
   {
     title: "Song / media recommendation catalog",
-    body: "Entries are inserted in batches and searched heavily; removing a track is infrequent and can wait for a human to confirm.",
+    body: "Catalogs grow in batches and get searched millions of times between them. Pulling one track can wait the few minutes it takes a human to look and confirm.",
   },
   {
     title: "Internal analytics / BI dataset",
-    body: "Ingested periodically, queried often, rarely if ever needs individual records removed on demand.",
+    body: "Ingested on a schedule, queried constantly, rarely touched by a delete at all — exactly the shape of workload this design was built around.",
   },
 ];
 
 const POOR_FIT = [
   {
     title: "Chat apps, social feeds, user-facing delete",
-    body: "This design assumes deletion is the exception, not a constant background operation.",
+    body: "If deletion is something your users do dozens of times a day as a normal action, a human-in-the-loop queue isn't a safeguard — it's a bottleneck. This isn't that database.",
   },
   {
     title: "Anything needing instant delete visibility",
-    body: "The deferred-delete model is the point of this project, not a limitation to route around.",
+    body: "The delay between a request and an execution isn't a bug waiting to be optimized away. It's the entire point of the architecture.",
   },
 ];
 
@@ -57,7 +57,7 @@ const DOCS = [
   {
     slug: "delete-architecture",
     title: "Deferred Delete Architecture",
-    body: "Why a leaked API key can never delete your data — the full design, plus how it compares to other vector databases.",
+    body: "The full design: why a leaked API key can never delete your data, what it costs to guarantee that, and how it compares to Postgres soft-delete and LSM-tree tombstones.",
     tag: "Start here",
   },
   {
@@ -69,7 +69,7 @@ const DOCS = [
   {
     slug: "deployment-and-capacity",
     title: "Deployment & Capacity",
-    body: "Build and run it, plus real load-test numbers — verified clean up to ~950 concurrent connections.",
+    body: "Build it, run it, and see the real load-test numbers behind the claims — verified clean up to ~950 concurrent connections, not estimated.",
     tag: "Ops",
   },
 ];
@@ -89,10 +89,13 @@ export default function Home() {
           A vector database a leaked API key can&apos;t empty.
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-relaxed text-neutral-400">
-          OriginDB is a disk-backed Approximate Nearest Neighbor vector
-          database, built from scratch in C. A delete request can be sent
-          over the network — but it can only ever become an actual deletion
-          locally, by a human, on the server itself.
+          Every other vector database treats deletion as just another
+          authenticated call — leak the key, lose the data, instantly.
+          OriginDB was built from scratch in C to make that specific failure
+          structurally impossible: a delete request can travel over the
+          network, but nothing on the network can ever cause a byte to
+          actually disappear. Only a human, locally, on the machine itself,
+          can do that.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Button href="/docs/delete-architecture" variant="primary">
@@ -108,15 +111,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* delete flow diagram — replaces the old circle demo */}
+      {/* delete flow diagram */}
       <section className="mt-24">
         <h2 className="font-serif text-2xl text-neutral-50">
           How a delete actually happens
         </h2>
         <p className="mt-3 max-w-2xl text-neutral-400">
-          Deletion is split into two steps on purpose: requesting one can be
-          done over the network with a normal API key; executing one can
-          only happen here, locally, with an explicit human confirmation.
+          Deletion is split into two steps that live in two separate,
+          non-overlapping code paths on purpose. Requesting one takes a
+          normal API key over the network. Executing one takes a person,
+          typing a confirmation, on the server itself — after seeing exactly
+          how many records are about to go.
         </p>
         <div className="mt-8 rounded-2xl border border-neutral-800 bg-neutral-950 p-6">
           <DeleteFlowDiagram />
@@ -129,9 +134,13 @@ export default function Home() {
           How this compares to other vector databases
         </h2>
         <p className="mt-3 max-w-2xl text-neutral-400">
-          In most vector databases, a valid API key is the only thing
-          standing between a caller and permanent data loss. OriginDB adds a
-          second gate that a network request can never cross on its own.
+          Soft-delete flags and LSM-tree tombstones aren&apos;t new — Postgres
+          and Cassandra have used mechanisms like them for years. What they
+          control is how long deleted data stays recoverable. What they
+          don&apos;t control is who can trigger a real deletion in the first
+          place: any valid credential can, the instant it wants to. OriginDB
+          adds a second gate that no network request — authenticated or
+          not — can cross on its own.
         </p>
         <div className="mt-8">
           <ComparisonTable />
@@ -170,9 +179,12 @@ export default function Home() {
           Real load-test numbers, not estimates
         </h2>
         <p className="mt-3 max-w-2xl text-neutral-400">
-          Tested over the public internet on a 2 vCPU / 4GB VM — clean, zero
-          failures up to ~950 simultaneous connections; unpredictable right
-          around 1000.
+          A security guarantee is only worth as much as the system that
+          enforces it stays up. Tested over the public internet against a
+          2 vCPU / 4GB VM: zero failures up to roughly 950 simultaneous
+          connections, and no crash, hang, or data corruption even past that
+          point — just rising latency as the queue does exactly what it was
+          designed to do under load.
         </p>
         <div className="mt-8 rounded-2xl border border-neutral-800 bg-neutral-950 p-6">
           <ConcurrencyChart />
@@ -224,9 +236,12 @@ export default function Home() {
           Have an idea for where this should go next?
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-neutral-400">
-          This started as a toy project to learn low-level memory management
-          and performance work in C — suggestions on where to take the
-          deferred-delete idea are genuinely welcome.
+          This started as an attempt to learn low-level memory management and
+          real performance work in C, not to reinvent the vector database.
+          There&apos;s nothing here that Pinecone or Qdrant can&apos;t already
+          do faster at scale. The one thing worth arguing about is the trust
+          boundary around deletion — and that argument is genuinely still
+          open.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Button href="mailto:vermaadityansh@gmail.com" variant="primary" external>
