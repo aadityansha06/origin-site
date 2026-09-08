@@ -1,0 +1,266 @@
+@import "tailwindcss";
+
+:root {
+  /* Base surfaces — deep graphite, faint blue undertone */
+  --color-bg: #0c0e11;
+  --color-bg-raised: #12151a;
+  --color-surface: #161a20;
+  --color-surface-hover: #1b2028;
+  --color-border: #262b33;
+  --color-border-soft: #1e232b;
+
+  /* Text */
+  --color-ink: #eceef1;
+  --color-ink-muted: #9aa2ae;
+  --color-ink-faint: #5c6470;
+
+  /* Brand — the red ring from the mark. Deliberately more red/brick than
+     orange-terracotta: this is the boundary line of the ANN search radius. */
+  --color-signal: #c1443a;
+  --color-signal-bright: #e0594c;
+  --color-signal-dim: #7a2c26;
+  --color-signal-wash: rgba(193, 68, 58, 0.1);
+
+  /* Supporting accent for "safe / human-gated" moments */
+  --color-ok: #5fae7a;
+
+  --font-display: "Fraunces", serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --content-width: 1120px;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--color-bg);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Subtle grain so the near-black background doesn't feel flat/plasticky */
+.noise {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: var(--color-signal-dim);
+  color: #fff;
+}
+
+a {
+  color: inherit;
+}
+
+/* Keyboard focus must stay visible everywhere */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-signal-bright);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.container-page {
+  max-width: var(--content-width);
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container-page {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* ---------- Docs prose ---------- */
+.doc-prose {
+  color: var(--color-ink);
+  font-size: 0.9975rem;
+  line-height: 1.75;
+  max-width: 74ch;
+}
+
+.doc-prose h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.5rem;
+  margin-top: 2.75rem;
+  margin-bottom: 0.9rem;
+  color: var(--color-ink);
+  scroll-margin-top: 6rem;
+  letter-spacing: -0.01em;
+}
+
+.doc-prose h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.15rem;
+  margin-top: 2rem;
+  margin-bottom: 0.6rem;
+  scroll-margin-top: 6rem;
+}
+
+.doc-prose p {
+  margin-bottom: 1.1rem;
+  color: var(--color-ink);
+}
+
+.doc-prose p + p {
+  margin-top: -0.3rem;
+}
+
+.doc-prose strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.doc-prose a {
+  color: var(--color-signal-bright);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.doc-prose ul, .doc-prose ol {
+  margin: 0 0 1.1rem 1.25rem;
+  color: var(--color-ink);
+}
+
+.doc-prose li {
+  margin-bottom: 0.45rem;
+  padding-left: 0.25rem;
+}
+
+.doc-prose ul {
+  list-style: none;
+  margin-left: 0;
+}
+
+.doc-prose ul > li {
+  position: relative;
+  padding-left: 1.15rem;
+}
+
+.doc-prose ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-signal);
+}
+
+.doc-prose code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-soft);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  color: #e0b7b0;
+}
+
+.doc-prose pre {
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  margin-bottom: 1.4rem;
+  font-size: 0.83rem;
+  line-height: 1.65;
+}
+
+.doc-prose pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-ink-muted);
+}
+
+.doc-prose blockquote {
+  border-left: 2px solid var(--color-signal);
+  padding-left: 1rem;
+  margin: 1.4rem 0;
+  color: var(--color-ink-muted);
+  font-style: italic;
+}
+
+.doc-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.6rem;
+  font-size: 0.87rem;
+}
+
+.doc-prose th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: var(--color-ink-muted);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.55rem 0.85rem;
+}
+
+.doc-prose td {
+  border-bottom: 1px solid var(--color-border-soft);
+  padding: 0.6rem 0.85rem;
+  vertical-align: top;
+  color: var(--color-ink);
+}
+
+.doc-prose hr {
+  border: none;
+  border-top: 1px solid var(--color-border-soft);
+  margin: 2.25rem 0;
+}
+
+.doc-prose h2 a.anchor,
+.doc-prose h3 a.anchor {
+  color: inherit;
+  text-decoration: none;
+}
