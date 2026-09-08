@@ -86,7 +86,7 @@ export default function Home() {
       {/* hero */}
       <section>
         <h1 className="max-w-3xl font-serif text-4xl leading-tight text-neutral-50 md:text-5xl">
-          A vector database a leaked API key can&apos;t empty.
+        The vector database where a leaked API key can't delete your data.
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-relaxed text-neutral-400">
           Every other vector database treats deletion as just another
