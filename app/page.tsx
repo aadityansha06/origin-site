@@ -99,7 +99,7 @@ export default function Home() {
             Read the delete architecture
           </Button>
           <Button
-            href="https://github.com/aadityansha06/OriginDB"
+            href="https://github.com/aadityansha06/vecdb"
             variant="secondary"
             external
           >
